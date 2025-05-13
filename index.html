@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minecraft Biome Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #202020;
+      color: #fff;
+      padding: 2em;
+      text-align: center;
+    }
+    input {
+      padding: 0.5em;
+      margin: 0.5em;
+      width: 200px;
+    }
+    button {
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 1.5em;
+      font-size: 1.2em;
+      color: #4caf50;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Minecraft Biome Finder</h1>
+
+  <input type="text" id="seed" placeholder="Seed" />
+  <input type="text" id="x" placeholder="X Coordinate" />
+  <input type="text" id="z" placeholder="Z Coordinate" />
+  <br>
+  <button onclick="getBiome()">Find Biome</button>
+
+  <div id="result"></div>
+  <iframe id="biome-map-frame" src="" width="800" height="600" style="display:none;"></iframe>
+
+  <script>
+    async function getBiome() {
+      const seed = document.getElementById('seed').value;
+      const x = document.getElementById('x').value;
+      const z = document.getElementById('z').value;
+
+      const response = await fetch('http://127.0.0.1:5000/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ seed, x, z })
+      });
+
+      const data = await response.json();
+      const resultDiv = document.getElementById('result');
+      if (data.output) {
+        resultDiv.textContent = data.output;
+      } else {
+        resultDiv.textContent = 'Error: ' + data.error;
+      }
+if (data.output.includes("http")) {
+  const iframe = document.getElementById('biome-map-frame');
+  iframe.src = data.output;
+  iframe.style.display = 'block';
+}
+    }
+  </script>
+
+</body>
+</html>
